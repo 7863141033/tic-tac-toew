@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Premium Tic Tac Toe with modern UI and keyboard support" />
+    <title>Premium Tic Tac Toe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="aurora aurora-one"></div>
+    <div class="aurora aurora-two"></div>
+
+    <main class="app-shell" aria-label="Tic Tac Toe game application">
+      <section class="hero-panel" aria-labelledby="game-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Neon Arcade</p>
+          <h1 id="game-title">Premium Tic Tac Toe</h1>
+          <p class="hero-text">
+            A sleek, glassmorphism-powered showdown for two players with polished
+            animations, keyboard support, and immersive feedback.
+          </p>
+        </div>
+
+        <div class="status-card" role="status" aria-live="polite">
+          <span class="status-label">Current Turn</span>
+          <div class="turn-indicator" id="turnIndicator" aria-label="Current turn indicator">
+            <span class="turn-symbol" id="turnSymbol">X</span>
+            <span class="turn-name" id="turnName">Player X</span>
+          </div>
+          <p class="status-message" id="statusMessage">Player X to move</p>
+        </div>
+      </section>
+
+      <section class="game-panel" aria-label="Game board and controls">
+        <div class="scoreboard" aria-label="Scoreboard">
+          <article class="score-card score-x">
+            <span class="score-label">Player X</span>
+            <strong class="score-value" id="scoreX">0</strong>
+          </article>
+          <article class="score-card score-draw">
+            <span class="score-label">Draws</span>
+            <strong class="score-value" id="scoreDraw">0</strong>
+          </article>
+          <article class="score-card score-o">
+            <span class="score-label">Player O</span>
+            <strong class="score-value" id="scoreO">0</strong>
+          </article>
+        </div>
+
+        <div class="board-wrap">
+          <div class="board" id="board" role="grid" aria-label="Tic Tac Toe board"></div>
+          <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+        </div>
+
+        <div class="controls" aria-label="Game controls">
+          <button id="newGameBtn" class="btn btn-primary">New Game</button>
+          <button id="restartBtn" class="btn btn-secondary">Restart Round</button>
+          <button id="resetScoresBtn" class="btn btn-ghost">Reset Scores</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
