@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop All — Wigs, Bundles, Hair & Beauty | LuxeHaus</title>
+  <meta name="description" content="Browse the full LuxeHaus collection: lace front wigs, human hair bundles, extensions, braiding hair, hair care, skincare, makeup, lashes and beauty accessories." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="crumbs"><a href="index.html">Home</a> — Shop</p>
+      <h1 id="shopTitle">Shop All</h1>
+      <p id="shopDesc">Premium hair and beauty, curated for the confident you.</p>
+    </div>
+  </section>
+
+  <div class="container shop-layout">
+    <aside class="filters" aria-label="Product filters">
+      <div>
+        <h3>Categories</h3>
+        <ul class="filter-list" id="catList"></ul>
+      </div>
+      <div>
+        <h3>Quick Filters</h3>
+        <ul class="filter-list">
+          <li><a href="shop.html?cat=new-arrivals">New Arrivals</a></li>
+          <li><a href="shop.html?cat=sale">On Sale</a></li>
+          <li><a href="shop.html?cat=best">Best Sellers</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <div>
+      <div class="shop-toolbar">
+        <p id="resultCount" style="font-size:.85rem;color:var(--muted)"></p>
+        <select class="sort" id="sortSel" aria-label="Sort products">
+          <option value="featured">Sort: Featured</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+      <div class="product-grid cols-3" id="shopGrid"></div>
+    </div>
+  </div>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(location.search);
+      const cat = params.get("cat") || "all";
+      let list = [...PRODUCTS];
+
+      if (cat === "new-arrivals") { list = list.filter(p => p.tags.includes("new")); setTitle("New Arrivals", "Just landed — be the first to shop the newest drops."); }
+      else if (cat === "sale") { list = list.filter(p => p.sale != null); setTitle("Sale", "Limited-time offers on your favorites — while stocks last."); }
+      else if (cat === "best") { list = list.filter(p => p.tags.includes("best")); setTitle("Best Sellers", "The pieces our customers can't stop re-ordering."); }
+      else if (cat !== "all") {
+        list = list.filter(p => p.cat === cat);
+        const c = CATEGORIES.find(x => x.id === cat);
+        if (c) setTitle(c.name, "Shop our full " + c.name.toLowerCase() + " collection.");
+      }
+
+      // sidebar
+      const all = [["all", "All Products", PRODUCTS.length], ["new-arrivals", "New Arrivals", PRODUCTS.filter(p => p.tags.includes("new")).length], ["sale", "Sale", PRODUCTS.filter(p => p.sale != null).length]]
+        .concat(CATEGORIES.map(c => [c.id, c.name, PRODUCTS.filter(p => p.cat === c.id).length]));
+      document.getElementById("catList").innerHTML = all.map(([id, name, n]) =>
+        `<li><a href="shop.html?cat=${id}" class="${id === cat ? "active" : ""}">${name}<span>${n}</span></a></li>`).join("");
+
+      // sorting
+      const sortSel = document.getElementById("sortSel");
+      const apply = () => {
+        const v = sortSel.value;
+        let out = [...list];
+        if (v === "low") out.sort((a, b) => (a.sale ?? a.price) - (b.sale ?? b.price));
+        if (v === "high") out.sort((a, b) => (b.sale ?? b.price) - (a.sale ?? a.price));
+        if (v === "rating") out.sort((a, b) => b.rating - a.rating);
+        renderGrid("shopGrid", out);
+        document.getElementById("resultCount").textContent = `${out.length} product${out.length !== 1 ? "s" : ""}`;
+      };
+      sortSel.addEventListener("change", apply);
+      apply();
+
+      function setTitle(t, d) { document.getElementById("shopTitle").textContent = t; document.getElementById("shopDesc").textContent = d; document.title = t + " | LuxeHaus"; }
+    });
+  </script>
+</body>
+</html>

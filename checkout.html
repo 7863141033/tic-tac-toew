@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Checkout | LuxeHaus</title>
+  <meta name="description" content="Secure checkout with credit/debit card, PayPal, Apple Pay and Google Pay. Mobile-friendly and SSL protected." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero" style="padding:40px 0">
+    <div class="container"><p class="crumbs"><a href="index.html">Home</a> — Checkout</p><h1>Secure Checkout</h1></div>
+  </section>
+
+  <div id="checkoutContent" class="container"></div>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const el = document.getElementById("checkoutContent");
+      const cart = Store.getCart();
+      if (!cart.length) {
+        el.innerHTML = `<div class="empty-cart"><div style="font-size:3rem">🛍️</div><h2>Your bag is empty</h2><p>Add something beautiful before checking out.</p><a class="btn btn-gold" href="shop.html">Shop Now</a></div>`;
+        return;
+      }
+      const t = Store.totals(cart);
+      const SHIP = [["standard", "Standard Shipping", "5–8 business days", t.subtotal - t.discount >= 75 ? 0 : 5.99], ["express", "Express Shipping", "3–4 business days", 14.99], ["priority", "Priority Overnight", "1–2 business days", 24.99]];
+
+      el.innerHTML = `<div class="checkout-layout">
+        <form id="checkoutForm" novalidate>
+          <div class="panel">
+            <h3><span class="step-num">1</span> Contact &amp; Shipping Address</h3>
+            <div class="form-grid">
+              <div class="field full"><label>Full Name</label><input id="fName" required autocomplete="name"><div class="err">Please enter your full name</div></div>
+              <div class="field full"><label>Email</label><input id="fEmail" type="email" required autocomplete="email"><div class="err">Please enter a valid email</div></div>
+              <div class="field full"><label>Street Address</label><input id="fAddress" required autocomplete="street-address"><div class="err">Please enter your address</div></div>
+              <div class="field"><label>City</label><input id="fCity" required autocomplete="address-level2"><div class="err">Required</div></div>
+              <div class="field"><label>State / Province</label><input id="fState" required><div class="err">Required</div></div>
+              <div class="field"><label>ZIP / Postal Code</label><input id="fZip" required autocomplete="postal-code"><div class="err">Required</div></div>
+              <div class="field"><label>Country</label><select id="fCountry"><option>United States</option><option>Canada</option><option>United Kingdom</option><option>Other</option></select></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3><span class="step-num">2</span> Shipping Method</h3>
+            ${SHIP.map(([id, name, eta, price], i) => `
+              <label class="ship-opt ${i === 0 ? "selected" : ""}">
+                <input type="radio" name="shipMethod" value="${id}" data-price="${price}" ${i === 0 ? "checked" : ""}>
+                <span><b>${name}</b><small>${eta}</small></span>
+                <span class="price">${price === 0 ? '<span class="free" style="color:#2e8b57">FREE</span>' : fmt(price)}</span>
+              </label>`).join("")}
+          </div>
+
+          <div class="panel">
+            <h3><span class="step-num">3</span> Payment</h3>
+            <div class="pay-tabs" role="tablist">
+              <button type="button" class="pay-tab selected" data-pay="card">💳 Card</button>
+              <button type="button" class="pay-tab" data-pay="paypal">PayPal</button>
+              <button type="button" class="pay-tab" data-pay="applepay"> Pay</button>
+              <button type="button" class="pay-tab" data-pay="googlepay">G Pay</button>
+            </div>
+            <div id="cardFields">
+              <div class="form-grid">
+                <div class="field full"><label>Card Number</label><input id="fCard" inputmode="numeric" placeholder="1234 5678 9012 3456"><div class="err">Enter a valid card number</div></div>
+                <div class="field"><label>Expiry (MM/YY)</label><input id="fExp" placeholder="12/28"><div class="err">MM/YY format</div></div>
+                <div class="field"><label>CVC</label><input id="fCvc" inputmode="numeric" placeholder="123" maxlength="4"><div class="err">3–4 digits</div></div>
+                <div class="field full"><label>Name on Card</label><input id="fCardName"><div class="err">Required</div></div>
+              </div>
+              <p class="pay-note">Card payments are processed over an encrypted SSL connection. Demo mode — no charge is made.</p>
+            </div>
+            <div id="altPayNote" style="display:none"></div>
+            <div class="secure-note">🔒 256-bit SSL encrypted checkout — your data is always protected</div>
+          </div>
+
+          <button class="btn btn-gold btn-block" id="placeOrderBtn" type="submit">Place Order · <span id="payTotal"></span></button>
+          <p style="text-align:center;font-size:.78rem;color:var(--muted);margin-top:12px">By placing this order you agree to our <a href="terms.html" style="text-decoration:underline">Terms</a> and <a href="privacy-policy.html" style="text-decoration:underline">Privacy Policy</a>.</p>
+        </form>
+
+        <aside class="summary">
+          <h3>Order Summary</h3>
+          ${cart.map(l => { const p = PRODUCTS.find(x => x.id === l.id) || {}; const v = [l.color, l.length].filter(Boolean).join(" · "); return `<div class="order-line"><img src="${p.img}" alt="" onerror="this.style.visibility='hidden'"><span style="flex:1">${p.name}<br><small style="color:var(--muted)">${v ? v + " · " : ""}× ${l.qty}</small></span><b>${fmt(Store.lineTotal(l))}</b></div>`; }).join("")}
+          <div style="height:10px"></div>
+          <div class="sum-row"><span>Subtotal</span><span>${fmt(t.subtotal)}</span></div>
+          ${t.discount ? `<div class="sum-row"><span>Discount (${t.code})</span><span style="color:#2e8b57">−${fmt(t.discount)}</span></div>` : ""}
+          <div class="sum-row"><span id="shipLabel">Shipping</span><span id="shipCost">${t.shipping === 0 ? "FREE" : fmt(t.shipping)}</span></div>
+          <div class="sum-row"><span>Tax (8%)</span><span id="taxCost">${fmt(t.tax)}</span></div>
+          <div class="sum-row total"><span>Total</span><span id="grandTotal">${fmt(t.total)}</span></div>
+          <a href="cart.html" style="display:block;text-align:center;font-size:.8rem;margin-top:14px;color:var(--muted);text-decoration:underline">← Edit cart / apply discount code</a>
+        </aside>
+      </div>`;
+
+      document.getElementById("payTotal").textContent = fmt(t.total);
+
+      // shipping selection updates totals
+      const shipRadios = el.querySelectorAll('input[name="shipMethod"]');
+      const baseAfter = t.subtotal - t.discount;
+      shipRadios.forEach(r => r.addEventListener("change", () => {
+        el.querySelectorAll(".ship-opt").forEach(o => o.classList.remove("selected"));
+        r.closest(".ship-opt").classList.add("selected");
+        const ship = +r.dataset.price;
+        const tax = +(baseAfter * 0.08).toFixed(2);
+        const grand = +(baseAfter + ship + tax).toFixed(2);
+        document.getElementById("shipCost").innerHTML = ship === 0 ? '<span style="color:#2e8b57">FREE</span>' : fmt(ship);
+        document.getElementById("taxCost").textContent = fmt(tax);
+        document.getElementById("grandTotal").textContent = fmt(grand);
+        document.getElementById("payTotal").textContent = fmt(grand);
+      }));
+
+      // payment tabs
+      let payMethod = "card";
+      el.querySelectorAll(".pay-tab").forEach(b => b.addEventListener("click", () => {
+        el.querySelectorAll(".pay-tab").forEach(x => x.classList.remove("selected"));
+        b.classList.add("selected");
+        payMethod = b.dataset.pay;
+        const cardFields = document.getElementById("cardFields");
+        const alt = document.getElementById("altPayNote");
+        if (payMethod === "card") { cardFields.style.display = ""; alt.style.display = "none"; }
+        else {
+          cardFields.style.display = "none";
+          alt.style.display = "";
+          const names = { paypal: "PayPal", applepay: "Apple Pay", googlepay: "Google Pay" };
+          alt.innerHTML = `<div class="ship-opt selected" style="cursor:default"><span><b>Continue with ${names[payMethod]}</b><small>You'll be redirected to complete payment securely.</small></span><span class="price">${names[payMethod]}</span></div><p class="pay-note">Demo mode — connect your payment provider to activate ${names[payMethod]}.</p>`;
+        }
+      }));
+
+      // validation helpers
+      const v = (id, ok) => { const f = document.getElementById(id).closest(".field"); f.classList.toggle("invalid", !ok); return ok; };
+      el.querySelector("#checkoutForm").addEventListener("submit", e => {
+        e.preventDefault();
+        let ok = true;
+        ok &= v("fName", document.getElementById("fName").value.trim().length > 1);
+        ok &= v("fEmail", /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(document.getElementById("fEmail").value));
+        ok &= v("fAddress", document.getElementById("fAddress").value.trim().length > 3);
+        ok &= v("fCity", document.getElementById("fCity").value.trim().length > 1);
+        ok &= v("fState", document.getElementById("fState").value.trim().length > 1);
+        ok &= v("fZip", document.getElementById("fZip").value.trim().length > 2);
+        if (payMethod === "card") {
+          ok &= v("fCard", document.getElementById("fCard").value.replace(/\D/g, "").length >= 12);
+          ok &= v("fExp", /^(0[1-9]|1[0-2])\/\d{2}$/.test(document.getElementById("fExp").value));
+          ok &= v("fCvc", /^\d{3,4}$/.test(document.getElementById("fCvc").value));
+          ok &= v("fCardName", document.getElementById("fCardName").value.trim().length > 1);
+        }
+        if (!ok) { toast("Please review the highlighted fields"); return; }
+
+        const shipSel = el.querySelector('input[name="shipMethod"]:checked');
+        const shipName = shipSel.closest(".ship-opt").querySelector("b").textContent;
+        const order = Store.placeOrder({ name: document.getElementById("fName").value.trim(), email: document.getElementById("fEmail").value.trim(), address: document.getElementById("fAddress").value.trim(), city: document.getElementById("fCity").value.trim(), state: document.getElementById("fState").value.trim(), zip: document.getElementById("fZip").value.trim(), payment: payMethod, shipMethod: shipName });
+        Store.updateBadge();
+        showConfirmation(order);
+      });
+
+      function showConfirmation(order) {
+        document.querySelector(".page-hero").style.display = "none";
+        el.innerHTML = `<div class="confirm">
+          <div class="confirm-icon">${ICONS.check}</div>
+          <p class="eyebrow">Order Confirmed</p>
+          <h1>Thank You, ${order.customer.name.split(" ")[0]}!</h1>
+          <p style="color:var(--muted)">Your order has been placed and is being prepared. A confirmation email is on its way to <b>${order.customer.email}</b>.</p>
+          <div class="order-id">Order ${order.id}</div>
+          <div class="timeline">
+            <div class="timeline-step done"><div class="dot on"></div><small>Confirmed</small></div>
+            <div class="timeline-step"><div class="dot"></div><small>Processing</small></div>
+            <div class="timeline-step"><div class="dot"></div><small>Shipped</small></div>
+            <div class="timeline-step"><div class="dot"></div><small>Delivered</small></div>
+          </div>
+          <div class="sum-row" style="max-width:340px;margin:0 auto"><span>Payment</span><span style="text-transform:capitalize">${order.payment === "card" ? "Credit / Debit Card" : order.payment}</span></div>
+          <div class="sum-row" style="max-width:340px;margin:0 auto"><span>Total</span><b>${fmt(order.total)}</b></div>
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap">
+            <a class="btn btn-dark" href="account.html">Track My Order</a>
+            <a class="btn btn-outline" href="shop.html">Continue Shopping</a>
+          </div>
+        </div>`;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+  </script>
+</body>
+</html>

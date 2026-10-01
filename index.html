@@ -1,72 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Premium Tic Tac Toe with modern UI and keyboard support" />
-    <title>Premium Tic Tac Toe</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="aurora aurora-one"></div>
-    <div class="aurora aurora-two"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LuxeHaus — Premium Wigs, Bundles & Beauty | Your Beauty. Your Style. Your Confidence.</title>
+  <meta name="description" content="Shop premium wigs, human hair, bundles, hair care, skincare and makeup at LuxeHaus. Salon-quality beauty at prices you'll love. Free shipping over $75." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
 
-    <main class="app-shell" aria-label="Tic Tac Toe game application">
-      <section class="hero-panel" aria-labelledby="game-title">
-        <div class="hero-copy">
-          <p class="eyebrow">Neon Arcade</p>
-          <h1 id="game-title">Premium Tic Tac Toe</h1>
-          <p class="hero-text">
-            A sleek, glassmorphism-powered showdown for two players with polished
-            animations, keyboard support, and immersive feedback.
-          </p>
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1600&q=80" alt="Woman with flawless styled hair" onerror="this.style.display='none'" />
+    <div class="hero-bg"></div>
+    <div class="container hero-inner">
+      <p class="eyebrow" style="color:var(--gold-soft)">Neon Arcade — Est. 2020</p>
+      <h1>Your Beauty. Your Style.<br /><em>Your Confidence.</em></h1>
+      <p>Premium wigs, human hair, bundles and beauty essentials — salon-grade quality, curated for you, at prices you'll actually love.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="shop.html">Shop Now</a>
+        <a class="btn btn-outline-light" href="shop.html?cat=human-hair">Shop Hair</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>50k+</b><span>Happy Customers</span></div>
+        <div class="hero-stat"><b>4.9★</b><span>Average Rating</span></div>
+        <div class="hero-stat"><b>100%</b><span>Human Hair Promise</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="stars">★★★★★</div>
+      <p>"Best lace I've ever bought. The hairline is invisible!"</p>
+      <small>— Amara J., verified buyer</small>
+    </div>
+  </section>
+
+  <div class="strip" aria-hidden="true">
+    <div class="strip-track">
+      <span>100% Human Hair</span> · Fast Worldwide Shipping · <span>Wigs &amp; Bundles</span> · Easy 14-Day Returns · <span>Cruelty-Free Beauty</span> · Secure Checkout ·
+      <span>100% Human Hair</span> · Fast Worldwide Shipping · <span>Wigs &amp; Bundles</span> · Easy 14-Day Returns · <span>Cruelty-Free Beauty</span> · Secure Checkout ·
+    </div>
+  </div>
+
+  <!-- FEATURED CATEGORIES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Curated For You</p>
+        <h2>Featured Categories</h2>
+        <p>From luxury lace wigs to everyday beauty essentials — everything you need, in one place.</p>
+      </div>
+      <div class="cat-grid reveal" id="homeCategories"></div>
+      <div class="center-link"><a class="btn btn-outline" href="shop.html">Browse All Categories</a></div>
+    </div>
+  </section>
+
+  <!-- BEST SELLERS -->
+  <section class="section" style="background:#fff">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Loved By Thousands</p>
+        <h2>Best Sellers</h2>
+        <p>The pieces our customers can't stop re-ordering.</p>
+      </div>
+      <div class="product-grid reveal" id="bestSellers"></div>
+      <div class="center-link"><a class="btn btn-outline" href="shop.html">View All Best Sellers</a></div>
+    </div>
+  </section>
+
+  <!-- SPECIAL OFFERS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Limited Time</p>
+        <h2>Special Offers</h2>
+        <p>Exclusive deals — while stocks last.</p>
+      </div>
+      <div class="promo-grid reveal">
+        <div class="promo-tile">
+          <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=900&q=80" alt="Hair bundles on sale" loading="lazy" onerror="this.style.display='none'" />
+          <div><p class="eyebrow">Up To 25% Off</p><h3>Bundle Week</h3><p>Save on 3 &amp; 4-bundle deals — the more you stack, the more you save.</p><a class="btn btn-gold btn-sm" href="shop.html?cat=bundles">Shop Bundles</a></div>
         </div>
-
-        <div class="status-card" role="status" aria-live="polite">
-          <span class="status-label">Current Turn</span>
-          <div class="turn-indicator" id="turnIndicator" aria-label="Current turn indicator">
-            <span class="turn-symbol" id="turnSymbol">X</span>
-            <span class="turn-name" id="turnName">Player X</span>
-          </div>
-          <p class="status-message" id="statusMessage">Player X to move</p>
+        <div class="promo-tile" style="background:linear-gradient(135deg,#4a3a2c,#241f1c)">
+          <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80" alt="Makeup on sale" loading="lazy" onerror="this.style.display='none'" />
+          <div><p class="eyebrow">New Markdowns</p><h3>Beauty Steals</h3><p>Palettes, lipsticks and tools marked down up to 30% off.</p><a class="btn btn-gold btn-sm" href="shop.html?cat=sale">Shop The Sale</a></div>
         </div>
-      </section>
-
-      <section class="game-panel" aria-label="Game board and controls">
-        <div class="scoreboard" aria-label="Scoreboard">
-          <article class="score-card score-x">
-            <span class="score-label">Player X</span>
-            <strong class="score-value" id="scoreX">0</strong>
-          </article>
-          <article class="score-card score-draw">
-            <span class="score-label">Draws</span>
-            <strong class="score-value" id="scoreDraw">0</strong>
-          </article>
-          <article class="score-card score-o">
-            <span class="score-label">Player O</span>
-            <strong class="score-value" id="scoreO">0</strong>
-          </article>
+        <div class="promo-tile" style="background:linear-gradient(135deg,#5c4a33,#33281f)">
+          <img src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=900&q=80" alt="Skincare" loading="lazy" onerror="this.style.display='none'" />
+          <div><p class="eyebrow">Code GLOW10</p><h3>Glow Deal</h3><p>10% off skincare essentials — your glow-up starts here.</p><a class="btn btn-gold btn-sm" href="shop.html?cat=skincare">Shop Skincare</a></div>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="board-wrap">
-          <div class="board" id="board" role="grid" aria-label="Tic Tac Toe board"></div>
-          <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
-        </div>
+  <!-- NEW ARRIVALS -->
+  <section class="section" style="background:#fff">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Fresh In</p>
+        <h2>New Arrivals</h2>
+        <p>Just landed — be the first to shop the newest drops.</p>
+      </div>
+      <div class="product-grid reveal" id="newArrivals"></div>
+      <div class="center-link"><a class="btn btn-outline" href="shop.html?cat=new-arrivals">Shop All New Arrivals</a></div>
+    </div>
+  </section>
 
-        <div class="controls" aria-label="Game controls">
-          <button id="newGameBtn" class="btn btn-primary">New Game</button>
-          <button id="restartBtn" class="btn btn-secondary">Restart Round</button>
-          <button id="resetScoresBtn" class="btn btn-ghost">Reset Scores</button>
-        </div>
-      </section>
-    </main>
+  <!-- CUSTOMER REVIEWS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Real Reviews</p>
+        <h2>What Our Customers Say</h2>
+        <p>Rated 4.9/5 by over 50,000 beauty lovers worldwide.</p>
+      </div>
+      <div class="review-grid reveal" id="homeReviews"></div>
+    </div>
+  </section>
 
-    <script src="script.js"></script>
-  </body>
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="container reveal">
+      <p class="eyebrow">Join The List</p>
+      <h2>Get 15% Off Your First Order</h2>
+      <p>Sign up for exclusive drops, early access and members-only offers.</p>
+      <form class="newsletter-form" data-newsletter>
+        <input type="email" placeholder="Enter your email address" required aria-label="Email address" />
+        <button class="btn btn-dark" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- SOCIAL -->
+  <section class="section">
+    <div class="container reveal">
+      <div class="section-head">
+        <p class="eyebrow">@luxehausbeauty</p>
+        <h2>Follow Us On Social</h2>
+        <p>Daily inspo, styling tutorials and behind-the-scenes — join the community.</p>
+      </div>
+      <div class="social-row">
+        <a href="#" aria-label="Instagram"></a>
+        <a href="#" aria-label="Facebook"></a>
+        <a href="#" aria-label="TikTok"></a>
+        <a href="#" aria-label="Pinterest"></a>
+      </div>
+    </div>
+  </section>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCategories("homeCategories", 8);
+      renderGrid("bestSellers", PRODUCTS.filter(p => p.tags.includes("best")).slice(0, 4));
+      renderGrid("newArrivals", PRODUCTS.filter(p => p.tags.includes("new")).slice(0, 4));
+      document.getElementById("homeReviews").innerHTML = TESTIMONIALS.map(t => `
+        <article class="review-card">
+          <div class="stars">★★★★★</div>
+          <p>"${t.text}"</p>
+          <div class="reviewer"><span class="avatar">${t.name[0]}</span><span><b>${t.name}</b><small>${t.city}</small></span><span class="verified">Verified</span></div>
+        </article>`).join("");
+      const sIcons = document.querySelectorAll(".section .social-row a");
+      const social = [ICONS.ig, ICONS.fb, ICONS.tiktok, ICONS.pin];
+      sIcons.forEach((a, i) => a.innerHTML = social[i % social.length]);
+    });
+  </script>
+</body>
 </html>

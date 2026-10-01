@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product | LuxeHaus</title>
+  <meta name="description" content="Shop premium hair and beauty at LuxeHaus. Salon-quality quality you can trust." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero" style="padding:40px 0">
+    <div class="container"><p class="crumbs"><a href="index.html">Home</a> — <a href="shop.html">Shop</a> — <span id="crumbCat">Product</span></p></div>
+  </section>
+
+  <div class="container pd-layout">
+    <div class="pd-gallery">
+      <div class="pd-main"><img id="pdImg" src="" alt="Product image" onerror="this.style.display='none'" /></div>
+      <div class="pd-thumbs" id="pdThumbs"></div>
+    </div>
+    <div class="pd-info">
+      <p class="eyebrow" id="pdCat"></p>
+      <h1 id="pdName"></h1>
+      <div id="pdStars"></div>
+      <div class="pd-price" id="pdPrice"></div>
+      <p class="pd-desc" id="pdDesc"></p>
+
+      <div id="pdColorsWrap" style="display:none">
+        <div class="opt-label"><span>Color / Shade</span><b id="pdColorName"></b></div>
+        <div class="len-row" id="pdColors" style="gap:12px"></div>
+      </div>
+      <div id="pdLengthsWrap" style="display:none">
+        <div class="opt-label"><span>Length / Size</span><b id="pdLengthName"></b></div>
+        <div class="len-row" id="pdLengths"></div>
+      </div>
+
+      <div class="opt-label"><span>Quantity</span></div>
+      <div class="pd-buy">
+        <div class="qty">
+          <button id="qtyMinus" aria-label="Decrease quantity">−</button>
+          <input id="qtyInput" value="1" inputmode="numeric" aria-label="Quantity" />
+          <button id="qtyPlus" aria-label="Increase quantity">+</button>
+        </div>
+        <button class="btn btn-dark" id="addToCartBtn">Add to Cart</button>
+      </div>
+      <div class="pd-buy">
+        <button class="btn btn-gold btn-block" id="buyNowBtn">Buy Now</button>
+      </div>
+
+      <div class="pd-meta">
+        <span>✓ In stock — ships within 24 hours</span>
+        <span>✓ Free shipping on orders over $75</span>
+        <span>✓ Easy 14-day returns &amp; exchanges</span>
+        <span>✓ 100% authentic — quality guaranteed</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="background:#fff">
+    <div class="container">
+      <div class="section-head"><p class="eyebrow">Customer Reviews</p><h2 id="revHead">What Buyers Say</h2></div>
+      <div class="pd-reviews" id="pdReviews"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><p class="eyebrow">You May Also Like</p><h2>Related Products</h2></div>
+      <div class="product-grid" id="relatedGrid"></div>
+    </div>
+  </section>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const id = new URLSearchParams(location.search).get("id");
+      const p = PRODUCTS.find(x => x.id === id) || PRODUCTS[0];
+      document.title = p.name + " | LuxeHaus";
+      const price = p.sale != null ? `<span class="now">${fmt(p.sale)}</span><del>${fmt(p.price)}</del><span class="save">Save ${Math.round((1 - p.sale / p.price) * 100)}%</span>` : `<span class="now">${fmt(p.price)}</span>`;
+      document.getElementById("crumbCat").textContent = catName(p.cat);
+      document.getElementById("pdCat").textContent = catName(p.cat);
+      document.getElementById("pdName").textContent = p.name;
+      document.getElementById("pdStars").innerHTML = stars(p.rating, p.reviews + " reviews");
+      document.getElementById("pdPrice").innerHTML = price;
+      document.getElementById("pdDesc").textContent = p.desc;
+      const img = document.getElementById("pdImg");
+      img.style.display = "";
+      img.src = p.img;
+
+      // thumbs: main image + a few decorative zooms
+      const zooms = [p.img, p.img + "&w=500&sat=-10", p.img + "&w=500&crop=entropy", p.img + "&w=500&crop=edges"];
+      const thumbs = document.getElementById("pdThumbs");
+      thumbs.innerHTML = zooms.map((src, i) => `<button class="pd-thumb ${i === 0 ? "active" : ""}" data-src="${src}" aria-label="Image ${i + 1}"><img src="${src}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'"></button>`).join("");
+      thumbs.addEventListener("click", e => {
+        const b = e.target.closest(".pd-thumb");
+        if (!b) return;
+        thumbs.querySelectorAll(".pd-thumb").forEach(t => t.classList.remove("active"));
+        b.classList.add("active");
+        img.style.display = "";
+        img.src = b.dataset.src;
+      });
+
+      // options
+      let color = p.colors[0]?.name || "";
+      let len = p.lengths[0] || "";
+      const colorsWrap = document.getElementById("pdColorsWrap");
+      const lengthsWrap = document.getElementById("pdLengthsWrap");
+      if (p.colors.length) {
+        colorsWrap.style.display = "";
+        document.getElementById("pdColorName").textContent = color;
+        const cEl = document.getElementById("pdColors");
+        cEl.innerHTML = p.colors.map((c, i) => `<button class="swatch-btn ${i === 0 ? "selected" : ""}" style="background:${c.hex}" data-name="${c.name}" aria-label="${c.name}" title="${c.name}"></button>`).join("");
+        cEl.addEventListener("click", e => {
+          const b = e.target.closest(".swatch-btn"); if (!b) return;
+          cEl.querySelectorAll(".swatch-btn").forEach(x => x.classList.remove("selected"));
+          b.classList.add("selected");
+          color = b.dataset.name;
+          document.getElementById("pdColorName").textContent = color;
+        });
+      }
+      if (p.lengths.length) {
+        lengthsWrap.style.display = "";
+        document.getElementById("pdLengthName").textContent = len;
+        const lEl = document.getElementById("pdLengths");
+        lEl.innerHTML = p.lengths.map((l, i) => `<button class="len-btn ${i === 0 ? "selected" : ""}" data-len="${l}">${l}</button>`).join("");
+        lEl.addEventListener("click", e => {
+          const b = e.target.closest(".len-btn"); if (!b) return;
+          lEl.querySelectorAll(".len-btn").forEach(x => x.classList.remove("selected"));
+          b.classList.add("selected");
+          len = b.dataset.len;
+          document.getElementById("pdLengthName").textContent = len;
+        });
+      }
+
+      // qty
+      const qtyInput = document.getElementById("qtyInput");
+      document.getElementById("qtyMinus").addEventListener("click", () => qtyInput.value = Math.max(1, +qtyInput.value - 1));
+      document.getElementById("qtyPlus").addEventListener("click", () => qtyInput.value = +qtyInput.value + 1);
+
+      const add = () => { Store.addToCart(p.id, { color, length: len }, +qtyInput.value); Store.updateBadge(); };
+      document.getElementById("addToCartBtn").addEventListener("click", () => { add(); toast("Added to your bag ✓"); });
+      document.getElementById("buyNowBtn").addEventListener("click", () => { add(); location.href = "checkout.html"; });
+
+      // reviews (deterministic per product)
+      const hash = [...p.id].reduce((s, c) => s + c.charCodeAt(0), 0);
+      const picks = [0, 1, 2].map(i => REVIEW_POOL[(hash + i * 3) % REVIEW_POOL.length]);
+      document.getElementById("pdReviews").innerHTML = picks.map(r => `
+        <article class="review-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div class="reviewer"><span class="avatar">${r.n[0]}</span><span><b>${r.n}</b><small>Verified Purchase</small></span></div>
+            ${stars(5)}
+          </div>
+          <p>${r.t}</p>
+        </article>`).join("");
+      document.getElementById("revHead").textContent = `${p.rating} out of 5 — ${p.reviews}+ reviews`;
+
+      // related
+      renderGrid("relatedGrid", PRODUCTS.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4));
+    });
+  </script>
+</body>
+</html>

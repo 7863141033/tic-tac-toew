@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Cart | LuxeHaus</title>
+  <meta name="description" content="Review your LuxeHaus shopping cart and proceed to secure checkout." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero" style="padding:40px 0">
+    <div class="container"><p class="crumbs"><a href="index.html">Home</a> — Shopping Cart</p><h1>Your Bag</h1></div>
+  </section>
+
+  <div id="cartContent" class="container"></div>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const el = document.getElementById("cartContent");
+
+      function render() {
+        const cart = Store.getCart();
+        if (!cart.length) {
+          Store.clearCoupon();
+          el.innerHTML = `<div class="empty-cart">
+            <div style="font-size:3rem">🛍️</div>
+            <h2>Your bag is empty</h2>
+            <p>Discover our best sellers and find your next favorite.</p>
+            <a class="btn btn-gold" href="shop.html">Start Shopping</a>
+          </div>`;
+          return;
+        }
+        const t = Store.totals(cart);
+        el.innerHTML = `<div class="cart-layout">
+          <div class="cart-list">
+            ${cart.map(l => {
+              const p = PRODUCTS.find(x => x.id === l.id) || {};
+              const v = [l.color, l.length].filter(Boolean).join(" · ");
+              return `<div class="cart-item">
+                <img class="cart-item-img" src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'">
+                <div>
+                  <a href="product.html?id=${l.id}"><h4>${p.name || l.id}</h4></a>
+                  ${v ? `<div class="variant">${v}</div>` : ""}
+                  <div class="variant">Qty: ${l.qty}</div>
+                  <button class="remove" data-remove="${l.key}">Remove</button>
+                </div>
+                <div class="line-total">${fmt(Store.lineTotal(l))}</div>
+              </div>`;
+            }).join("")}
+          </div>
+          <aside class="summary">
+            <h3>Order Summary</h3>
+            <div class="coupon-row">
+              <input id="couponInput" placeholder="Discount code" value="${t.code || ""}" />
+              <button class="btn btn-dark btn-sm" id="applyCoupon">Apply</button>
+            </div>
+            <div class="sum-row"><span>Subtotal</span><span>${fmt(t.subtotal)}</span></div>
+            ${t.discount ? `<div class="sum-row"><span>Discount (${t.code})</span><span style="color:#2e8b57">−${fmt(t.discount)}</span></div>` : ""}
+            <div class="sum-row"><span>Shipping</span><span>${t.shipping === 0 ? '<span class="free">FREE</span>' : fmt(t.shipping)}</span></div>
+            <div class="sum-row"><span>Estimated Tax</span><span>${fmt(t.tax)}</span></div>
+            <div class="sum-row total"><span>Total</span><span>${fmt(t.total)}</span></div>
+            <a class="btn btn-gold btn-block" href="checkout.html" style="margin-top:16px">Proceed to Checkout</a>
+            <p style="text-align:center;font-size:.78rem;color:var(--muted);margin-top:12px">🔒 Secure SSL checkout · Free shipping over $75</p>
+          </aside>
+        </div>`;
+
+        el.querySelectorAll("[data-remove]").forEach(b => b.addEventListener("click", () => { Store.remove(b.dataset.remove); render(); toast("Item removed"); }));
+        document.getElementById("applyCoupon").addEventListener("click", () => {
+          const code = document.getElementById("couponInput").value;
+          if (Store.applyCoupon(code)) { toast("Code applied ✓"); render(); }
+          else toast("Invalid discount code");
+        });
+      }
+      render();
+    });
+  </script>
+</body>
+</html>

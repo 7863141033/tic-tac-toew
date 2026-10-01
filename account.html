@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account — Orders & Tracking | LuxeHaus</title>
+  <meta name="description" content="Log in to your LuxeHaus account to view order history and track your deliveries." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero" style="padding:40px 0">
+    <div class="container"><p class="crumbs"><a href="index.html">Home</a> — My Account</p><h1 id="acctTitle">My Account</h1></div>
+  </section>
+
+  <div id="acctContent" class="container" style="padding:48px 0"></div>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const el = document.getElementById("acctContent");
+      const session = Store.session();
+
+      if (session) return renderDash();
+
+      let mode = "login";
+      el.innerHTML = `<div class="auth-card">
+        <div class="auth-tabs">
+          <button id="tabLogin" class="active">Sign In</button>
+          <button id="tabRegister">Create Account</button>
+        </div>
+        <form id="authForm" novalidate>
+          <div id="nameField" class="field" style="display:none;margin-bottom:12px"><label>Full Name</label><input id="aName"><div class="err">Please enter your name</div></div>
+          <div class="field" style="margin-bottom:12px"><label>Email</label><input id="aEmail" type="email"><div class="err">Enter a valid email</div></div>
+          <div class="field" style="margin-bottom:16px"><label>Password</label><input id="aPass" type="password"><div class="err">Minimum 6 characters</div></div>
+          <button class="btn btn-gold btn-block" type="submit" id="authSubmit">Sign In</button>
+          <p id="authErr" style="color:#b23b3b;font-size:.8rem;margin-top:10px;text-align:center"></p>
+        </form>
+        <p style="font-size:.75rem;color:var(--muted);text-align:center;margin-top:10px">Demo accounts are stored locally on this device.</p>
+      </div>`;
+
+      const tabL = document.getElementById("tabLogin"), tabR = document.getElementById("tabRegister");
+      tabL.addEventListener("click", () => setMode("login"));
+      tabR.addEventListener("click", () => setMode("register"));
+      function setMode(m) {
+        mode = m;
+        tabL.classList.toggle("active", m === "login");
+        tabR.classList.toggle("active", m === "register");
+        document.getElementById("nameField").style.display = m === "register" ? "" : "none";
+        document.getElementById("authSubmit").textContent = m === "register" ? "Create Account" : "Sign In";
+        document.getElementById("authErr").textContent = "";
+      }
+
+      document.getElementById("authForm").addEventListener("submit", e => {
+        e.preventDefault();
+        const email = document.getElementById("aEmail").value.trim();
+        const pass = document.getElementById("aPass").value;
+        const errEl = document.getElementById("authErr");
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || pass.length < 6) { errEl.textContent = "Enter a valid email and a password of 6+ characters."; return; }
+        const res = mode === "login" ? Store.login(email, pass) : Store.signup(document.getElementById("aName").value.trim() || email.split("@")[0], email, pass);
+        if (!res.ok) { errEl.textContent = res.msg; return; }
+        renderDash();
+      });
+
+      function renderDash() {
+        const session = Store.session();
+        const orders = Store.getOrders().filter(o => !session || o.customer.email === session.email || o.customer.email === o.customer.email);
+        const shown = Store.getOrders();
+        document.getElementById("acctTitle").textContent = "Hi, " + session.name.split(" ")[0];
+        el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+            <div><p class="eyebrow">Welcome Back</p><h2 style="font-family:var(--serif);font-size:1.6rem">${session.name}</h2><p style="color:var(--muted);font-size:.85rem">${session.email}</p></div>
+            <button class="btn btn-outline btn-sm" id="logoutBtn">Sign Out</button>
+          </div>
+          <div style="margin-top:26px">
+            <p class="eyebrow" style="margin-bottom:4px">Order Tracking</p>
+            <h3 style="font-family:var(--serif);font-size:1.3rem">My Orders</h3>
+            <div class="dash-orders">
+              ${shown.length ? shown.map(o => {
+                const steps = ["Processing", "Packed", "Shipped", "Delivered"];
+                const idx = Math.min(Math.floor((Date.now() - new Date(o.date)) / (1000 * 60 * 60 * 24)), 3);
+                return `<div class="dash-order">
+                  <div class="row1">
+                    <div><b>Order ${o.id}</b><br><small style="color:var(--muted)">${new Date(o.date).toLocaleDateString()} · ${o.items.reduce((s, i) => s + i.qty, 0)} item(s) · ${o.shipMethod}</small></div>
+                    <span class="status-pill ${o.status === "Delivered" ? "done" : ""}">${steps[idx]}</span>
+                  </div>
+                  <div class="timeline" style="margin:18px 0 4px">
+                    ${steps.map((s, i) => `<div class="timeline-step ${i <= idx ? "done" : ""}"><div class="dot ${i <= idx ? "on" : ""}"></div><small>${s}</small></div>`).join("")}
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;color:#5d5348">
+                    <span>${o.items.map(i => `${i.name} ×${i.qty}`).join(", ").slice(0, 80)}${o.items.map(i => `${i.name} ×${i.qty}`).join(", ").length > 80 ? "…" : ""}</span>
+                    <b style="color:var(--ink)">${fmt(o.total)}</b>
+                  </div>
+                </div>`;
+              }).join("") : `<div class="empty-cart" style="padding:40px 0"><p>No orders yet — your first beauty haul is waiting.</p><a class="btn btn-gold" href="shop.html">Shop Now</a></div>`}
+            </div>
+          </div>`;
+        document.getElementById("logoutBtn").addEventListener("click", () => { Store.logout(); location.reload(); });
+      }
+    });
+  </script>
+</body>
+</html>

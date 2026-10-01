@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Our Story | LuxeHaus</title>
+  <meta name="description" content="LuxeHaus provides premium hair and beauty products designed to help you express your personal style and confidence. Learn about our story." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="crumbs"><a href="index.html">Home</a> — About Us</p>
+      <h1>Our Story</h1>
+      <p>Beauty is more than a look — it's how you show up in the world.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center" id="aboutGrid">
+      <div class="reveal">
+        <p class="eyebrow">Est. 2020</p>
+        <h2 style="font-size:clamp(1.6rem,3vw,2.3rem);margin:10px 0 18px">Beauty that meets you where you are — and takes you where you want to be</h2>
+        <p style="color:#5d5348;margin-bottom:16px">LuxeHaus began with a simple belief: everyone deserves to feel luxurious in their own skin and hair — without the luxury price tag. What started as a small family business sourcing premium hair for friends and community has grown into a full beauty destination trusted by over 50,000 customers worldwide.</p>
+        <p style="color:#5d5348;margin-bottom:16px">We hand-select every product we carry — from raw single-donor hair and invisible HD lace to skincare, makeup and lashes — choosing quality, consistency and integrity over shortcuts. Every item is tested by our own stylists before it ever reaches your door.</p>
+        <p style="color:#5d5348">Because your beauty. Your style. Your confidence. — that's not just our tagline. It's our promise.</p>
+      </div>
+      <div class="reveal">
+        <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=900&q=80" alt="LuxeHaus styling session" style="border-radius:14px;box-shadow:var(--shadow)" onerror="this.style.display='none'" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:#fff">
+    <div class="container">
+      <div class="section-head reveal"><p class="eyebrow">Why LuxeHaus</p><h2>The LuxeHaus Difference</h2></div>
+      <div class="review-grid reveal">
+        <article class="review-card"><span style="font-size:1.8rem">✨</span><h3 style="font-size:1.1rem;margin:10px 0 8px">Uncompromising Quality</h3><p style="font-size:.9rem">100% authentic human hair, cruelty-free beauty and stylist-tested products. If it isn't good enough for us, we don't sell it.</p></article>
+        <article class="review-card"><span style="font-size:1.8rem">🤍</span><h3 style="font-size:1.1rem;margin:10px 0 8px">Premium, Not Pricey</h3><p style="font-size:.9rem">We source directly and skip the middlemen — so you get true salon quality at prices that actually make sense.</p></article>
+        <article class="review-card"><span style="font-size:1.8rem">🚚</span><h3 style="font-size:1.1rem;margin:10px 0 8px">Service You Can Feel</h3><p style="font-size:.9rem">Fast dispatch, real humans on support, easy returns and a community of 50,000+ customers who keep coming back.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter">
+    <div class="container reveal">
+      <p class="eyebrow">Join The List</p>
+      <h2>Get 15% Off Your First Order</h2>
+      <p>Exclusive drops, early access and members-only offers.</p>
+      <form class="newsletter-form" data-newsletter>
+        <input type="email" placeholder="Enter your email address" required aria-label="Email address" />
+        <button class="btn btn-dark" type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="siteFooter"></div>
+  <script src="js/main.js" defer></script>
+  <style>@media(max-width:820px){#aboutGrid{grid-template-columns:1fr!important;gap:28px!important}}</style>
+</body>
+</html>

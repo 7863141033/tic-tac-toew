@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | LuxeHaus</title>
+  <meta name="description" content="Contact the LuxeHaus team — email, phone, WhatsApp or our contact form. We reply within one business day." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="siteHeader"></div>
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="crumbs"><a href="index.html">Home</a> — Contact</p>
+      <h1>We're Here For You</h1>
+      <p>Questions about an order, a product or a styling recommendation? We reply within one business day.</p>
+    </div>
+  </section>
+
+  <div class="container contact-layout">
+    <div>
+      <div class="info-card"><span id="i1"></span><span><b>Email Us</b><small>support@luxehausbeauty.com</small></span></div>
+      <div class="info-card"><span id="i2"></span><span><b>Call Us</b><small>+1 (888) 555-0170 — Mon–Sat, 9am–6pm EST</small></span></div>
+      <div class="info-card"><span id="i3"></span><span><b>Business Hours</b><small>Mon–Fri: 9am–6pm · Sat: 10am–4pm · Sun: Closed</small></span></div>
+      <div class="info-card"><span id="i4"></span><span><b>Head Office</b><small>1240 Beauty Avenue, Suite 300, Atlanta, GA 30303</small></span></div>
+      <a class="wa-btn" href="https://wa.me/18885550170" target="_blank" rel="noopener"><span id="waIcon"></span> Chat on WhatsApp</a>
+
+      <div style="margin-top:30px">
+        <p class="eyebrow" style="margin-bottom:12px">Follow Us</p>
+        <div class="social-row" style="justify-content:flex-start">
+          <a href="#" aria-label="Instagram"></a>
+          <a href="#" aria-label="Facebook"></a>
+          <a href="#" aria-label="TikTok"></a>
+          <a href="#" aria-label="Pinterest"></a>
+        </div>
+      </div>
+    </div>
+
+    <form class="panel" id="contactForm" novalidate>
+      <h3>Send Us a Message</h3>
+      <div class="form-grid">
+        <div class="field"><label>Full Name</label><input id="cName" required><div class="err">Please enter your name</div></div>
+        <div class="field"><label>Email</label><input id="cEmail" type="email" required><div class="err">Please enter a valid email</div></div>
+        <div class="field"><label>Phone (optional)</label><input id="cPhone" type="tel"></div>
+        <div class="field"><label>Subject</label><select id="cSubject"><option>Order Support</option><option>Product Question</option><option>Shipping &amp; Returns</option><option>Wholesale Inquiry</option><option>Other</option></select></div>
+        <div class="field full"><label>Message</label><textarea id="cMessage" rows="5" required></textarea><div class="err">Please write a message</div></div>
+      </div>
+      <button class="btn btn-gold btn-block" type="submit" style="margin-top:16px">Send Message</button>
+      <p id="contactSuccess" style="display:none;text-align:center;margin-top:14px;color:#2e8b57;font-weight:600">✓ Thank you! Your message has been sent — we'll reply within one business day.</p>
+    </form>
+  </div>
+
+  <div id="siteFooter"></div>
+  <script src="js/data.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("i1").innerHTML = ICONS.mail;
+      document.getElementById("i2").innerHTML = ICONS.phone;
+      document.getElementById("i3").innerHTML = ICONS.shield;
+      document.getElementById("i4").innerHTML = ICONS.pin2;
+      document.getElementById("waIcon").innerHTML = ICONS.wa;
+      const social = [ICONS.ig, ICONS.fb, ICONS.tiktok, ICONS.pin];
+      document.querySelectorAll(".contact-layout ~ * .social-row a, .info-card + div .social-row a").forEach((a, i) => a.innerHTML = social[i % social.length]);
+
+      document.getElementById("contactForm").addEventListener("submit", e => {
+        e.preventDefault();
+        const ok =
+          document.getElementById("cName").value.trim().length > 1 &&
+          /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(document.getElementById("cEmail").value) &&
+          document.getElementById("cMessage").value.trim().length > 3;
+        if (!ok) { toast("Please complete the required fields"); return; }
+        e.target.reset();
+        document.getElementById("contactSuccess").style.display = "block";
+        toast("Message sent ✓");
+      });
+    });
+  </script>
+</body>
+</html>
